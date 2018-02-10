@@ -1,0 +1,58 @@
+#define MAIN_H
+
+#include <avr/io.h>
+#include <util/delay.h>
+#include <stdio.h>
+
+#define sbi(sfr,bit)	(sfr |=(1<<bit))
+#define cbi(sfr,bit)	(sfr &=~(1<<bit))
+#define tbi(sfr,bit)	(sfr ^=(1<<bit))
+
+
+void ngora(volatile int *port, int pin);
+void ngovao(volatile int *port, int pin);
+void setbithigh(volatile int *port, int pin);
+void setbitlow(volatile int *port, int pin);
+void daobit(volatile int *port, int pin);
+char checkpin(volatile int port, int pin);
+
+
+void ngora(volatile int *port, int pin)
+{
+	*port|=(1<<pin);	
+	//PINB=(1<<PB0);//cach 2
+}
+
+void ngovao(volatile int *port, int pin)
+{
+	*port&=~(1<<pin);
+}
+
+void setbithigh(volatile int *port, int pin)
+{
+	*port|=(1<<pin);
+}
+
+void setbitlow(volatile int *port, int pin)
+{
+	*port&=~(1<<pin);
+}
+
+void daobit(volatile int *port, int pin)
+{
+	*port^=(1<<pin);
+}
+
+char checkbit(volatile int port, int pin)
+{
+	if((port & (1<<pin))==0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+

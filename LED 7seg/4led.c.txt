@@ -1,0 +1,90 @@
+#include <avr/io.h>
+#include <util/delay.h>
+#include <stdio.h>
+#include "main.h"
+#define sbi(sfr,bit)	(sfr |=(1<<bit))
+#define cbi(sfr,bit)	(sfr &=~(1<<bit))
+#define tbi(sfr,bit)	(sfr ^=(1<<bit))
+#define high 1
+#define low 0
+char port[]={0x00,0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
+char maled[]={0xC0,0xF9,0xA4,0xB0,0x99,0x92,0x82,0xF8,0x80,0x90,0xFF};
+int time=0;
+int dem=990;
+void hc595write(uint8_t data,uint8_t a)
+{
+	for(uint8_t i=0;i<8;i++)
+	{
+		if(data&0x80)
+		{
+			sbi(PORTC,1); //PORTC.1 = chan data (DS)
+		}
+		else
+		{
+			cbi(PORTC,1);
+		}
+		sbi(PORTC,0); //PORTC.0 = chan clock (SH_CP)
+		cbi(PORTC,0);
+		if(a==1)
+		{
+			data=data<<1;
+		}
+		else if(a==0)
+		{
+			data=data<<0;
+		}
+	}
+	sbi(PORTC,2); //PORTC.2 = chan latch (ST_CP)
+	_delay_us(1);
+	cbi(PORTC,2);
+	_delay_us(1);
+}
+
+int main(void)
+{
+	sbi(DDRC,0); //khai bao chan output
+	sbi(DDRC,1);
+	sbi(DDRC,2);
+	sbi(DDRC,3);
+	sbi(DDRC,4);
+	sbi(DDRC,5);
+	sbi(DDRD,5);
+	cbi(DDRD,3); //khai bao chan input
+	sbi(PORTD,3);
+	hc595write(maled[0],high);	
+	while(1)
+	{
+		if(checkbit(PIND,3) == 0) //kiem tra nut nhan
+		{
+			dem++;
+			while(checkbit(PIND,3) == 0);
+		}
+		
+			for(time=0;time<=20;time++)
+			{
+				hc595write(maled[dem/1000],high);
+				sbi(PORTC,3); //chan dieu khien so 1 cua led 2 7seg
+				_delay_ms(2);
+				cbi(PORTC,3);
+
+				hc595write(maled[(dem/100)%10],high);
+				sbi(PORTC,4);  //chan dieu khien so 2 cua led 2 7seg
+				_delay_ms(2);
+				cbi(PORTC,4);
+
+				hc595write(maled[(dem/10)%10],high);
+				sbi(PORTC,5); //chan dieu khien so 3 cua led 2 7seg
+				_delay_ms(2);
+				cbi(PORTC,5);
+
+				hc595write(maled[dem%10],high);
+				sbi(PORTD,5);  //chan dieu khien so 4 cua led 2 7seg
+				_delay_ms(2);
+				cbi(PORTD,5);
+			}
+
+		
+	}
+return 0;
+}
+
