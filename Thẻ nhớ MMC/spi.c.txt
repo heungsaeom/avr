@@ -1,0 +1,14 @@
+#include "spi.h"
+
+void init_spi ( uint8_t speed, uint8_t mode, uint8_t dtype ) {
+	DDRB |= (1 << PORTB5) | (1 << PORTB7);//set MOSI and SCK as outputs
+	DDRB &= ~(1 << PORTB6);               //set MISO as an input
+	SPSR = (speed >> 2) & 0x01;
+	SPCR = (1 << SPE) | (1 << MSTR) | mode | dtype | (speed & 0x03); //setup the spi controller	
+}
+
+uint8_t spi_transfer ( uint8_t b ) {
+    SPDR = b;                             //set the data byte and start the transfer
+	while (!(SPSR & ( 1 << SPIF)));       //wait for the transfer to complete
+	return SPDR;                          //return received data
+} 

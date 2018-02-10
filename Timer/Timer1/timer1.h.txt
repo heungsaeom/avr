@@ -1,0 +1,41 @@
+#ifndef _TIMER_1
+#define _TIMER_1 1
+
+#include <stdint.h>
+#include "timercommon.h"
+
+void init_timer1 ( uint8_t prescaler, uint16_t top );
+
+void enable_interrupt_t1 ( void );
+ 
+void disable_interrupt_t1 ( void );
+ 
+uint16_t get_timer1 ( void );
+
+void set_timer1 ( uint16_t value );
+
+void reset_timer1 ( void );
+
+void init_timer1_pwm ( uint8_t prescaler, uint16_t top, uint8_t invert );
+
+void set_pwm_1a ( uint16_t value );
+
+void set_pwm_1b ( uint16_t value );
+
+void init_timer1_servos ( void );
+
+/**
+* This function sets the pulse length for channel a
+* @param us the microseconds of the servo pulse
+*/
+
+void set_servo_1a ( uint16_t us );
+
+/**
+* This function sets the pulse length for channel b
+* @param us the microseconds of the servo pulse
+*/
+
+void set_servo_1b ( uint16_t us );
+
+#endif

@@ -1,0 +1,15 @@
+
+#ifndef _MMC_H
+#define _MMC_H 1
+
+#include <stdint.h>
+
+char init_mmc( void );
+
+uint8_t mmc_command( uint8_t befF, uint8_t befH, uint16_t AdrH, uint16_t AdrL );
+
+char mmc_readblock( uint32_t address, uint8_t *sector );
+
+char mmc_writeblock( uint32_t address, uint8_t *sector );
+
+#endif 

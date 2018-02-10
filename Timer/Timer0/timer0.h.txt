@@ -1,0 +1,19 @@
+#ifndef _TIMER_0_H
+#define _TIMER_0_H 1
+
+#include "timercommon.h"
+#include <stdint.h>
+
+void init_timer0 ( uint8_t prescaler, uint8_t top );
+
+uint8_t get_timer0 ( void );
+
+void set_timer0 ( uint8_t v );
+
+void reset_timer0 ( void );
+
+void enable_interrupt_t0 ( void );
+
+void disable_interrupt_t0 ( void );
+
+#endif

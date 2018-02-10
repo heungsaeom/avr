@@ -1,0 +1,18 @@
+#include "timer2.h"
+
+void init_timer2_pwm ( uint8_t prescaler, uint8_t invert ) {
+	DDRD |= (1 << PORTD6) | (1 << PORTD7); //set the proper pins as outputs
+	TCCR2A = (1 << COM2A1) | (1 << COM2B1) | (1 << WGM21) | (1 << WGM20); //set up the timer for standard mode
+	if (invert) {                          //if inversion requested
+		TCCR2A |= (1 << COM2A0) | (1 << COM2B0);//set the extra bits required for inverted output
+	}
+	TCCR2B = (prescaler & 0x07); //set the other mode bits and the prescaler (masks unused bits)
+}
+
+void set_pwm_2a ( uint8_t value ) {
+	OCR2A = value;
+}
+
+void set_pwm_2b ( uint8_t value ) {
+	OCR2B = value;
+}

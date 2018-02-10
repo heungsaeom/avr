@@ -1,0 +1,9 @@
+
+#ifndef ADC_H
+#define ADC_H
+
+//functions
+extern void EEPROM_write(unsigned int uiAddress, unsigned char ucData);
+extern unsigned char EEPROM_read(unsigned int uiAddress);
+
+#endif

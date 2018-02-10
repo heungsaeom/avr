@@ -1,0 +1,72 @@
+#ifndef _TIMER_1
+#define _TIMER_1 1
+
+#include <timer1.h>
+#include <avr/interrupt.h>
+
+void init_timer1 ( uint8_t prescaler, uint16_t top ) {
+    if(prescaler > 5) {DDRB &= ~(1 << PORTB1);} //if an external clock source is used, set T1 pin as input
+	TCNT1 = 0;                           //set the timer to zero
+	ICR1 = top;                          //set the maximum timer value
+	TCCR1A = 0;                          //TCCR1A needs to be zero
+	TCCR1B = (1 << WGM13) | (1 << WGM12) | (prescaler & 0x07);//mask the bits in the prescaler variable that aren't used at set timer to reset at the value in ICR1
+}	
+
+void enable_interrupt_t1 ( void ) {
+	TIMSK1 |= (1 << TOIE1);             //enable the timer 1 overflow interrupt
+    sei();                              //set the global interrupt flag
+}
+ 
+void disable_interrupt_t1 ( void ) {
+	TIMSK1 &= ~(1 << TOIE1);            //clear the timer 1 overflow interrupt enable bit
+} 
+ 
+uint16_t get_timer1 ( void ) {
+    return TCNT1;                       //return the value of the Timer Counter 1 register
+}
+
+void set_timer1 ( uint16_t value ) {
+	TCNT1 = value;                      //set the value of timer counter 1 register to a desired value
+}
+
+void reset_timer1 ( void ) {
+	TCNT1 = 0;                          //set the timer counter 1 register to zero, reseting the timer
+}
+
+///////////////////////TIMER1_PWM/////////////////////////////////////////////////
+void init_timer1_pwm ( uint8_t prescaler, uint16_t top, uint8_t invert ) {
+	DDRD |= (1 << PORTD4) | (1 << PORTD5); //set the proper pins as outputs
+	ICR1 = top;                            //set the top value of the timer
+	TCCR1A = (1 << COM1A1) | (1 << COM1B1) | (1 << WGM11); //set up the timer for standard mode
+	if (invert) {                          //if inversion requested
+		TCCR1A |= (1 << COM1A0) | (1 << COM1B0);//set the extra bits required for inverted output
+	}
+	TCCR1B = (1 << WGM13) | (1 << WGM12) | (prescaler & 0x07); //set the other mode bits and the prescaler (masks unused bits)
+}
+
+void set_pwm_1a ( uint16_t value ) {
+	OCR1A = value;
+}
+
+void set_pwm_1b ( uint16_t value ) {
+	OCR1B = value;
+}
+
+////////////////////////////////TIMER1_SERVO//////////////////////////////////////////////
+void init_timer1_servos ( void ) {
+    DDRD |= (1 << PORTD4) | (1 << PORTD5);                //set up output pins
+    TCNT1 = 0;                                            //set the timer to zero
+    ICR1 = ticksperus * 20000;                            //set the maximum timer value for 20ms
+    TCCR1A = (1 << COM1A1) | (1 << COM1B1) | (1 << WGM11);//set up ocr pins and timer settings
+    TCCR1B = (1 << WGM13) | (1 << WGM12) | ( 1 << CS11 ); //set a prescaler of 8 and some timer config
+}
+
+void set_servo_1a ( uint16_t us ) {
+    OCR1A = us * ticksperus;
+}
+
+void set_servo_1b ( uint16_t us ) {
+    OCR1B = us * ticksperus;
+}
+
+#endif

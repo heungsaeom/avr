@@ -1,0 +1,30 @@
+#ifndef _SPI_H
+#define _SPI_H 1
+
+#include <avr/io.h>
+#include <stdint.h>
+
+//data modes
+#define MSBFIRST 0
+#define LSBFIRST (1 << DORD)
+
+//modes (detailed on page 160, table 16-2 in the atmega644 datasheet)
+#define MODE0 0
+#define MODE1 (1 << CHPA)
+#define MODE2 (1 << CPOL)
+#define MODE3 (1 << CHPA) | (1 << CPOL)
+
+//clock speeds
+#define FOSC_2 4
+#define FOSC_4 0
+#define FOSC_8 5
+#define FOSC_16 1
+#define FOSC_32 6
+#define FOSC_64 2
+#define FOSC_128 3
+
+void init_spi ( uint8_t speed, uint8_t mode, uint8_t dtype );
+
+uint8_t spi_transfer ( uint8_t b );
+
+#endif 

@@ -1,0 +1,13 @@
+#ifndef _TIMER_2_PWM
+#define _TIMER_2_PWM 1
+
+#include "timercommon.h"
+#include <stdint.h>
+
+void init_timer2_pwm ( uint8_t prescaler, uint8_t invert );
+
+void set_pwm_2a ( uint8_t value );
+
+void set_pwm_2b ( uint8_t value );
+
+#endif
