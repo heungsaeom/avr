@@ -1,0 +1,35 @@
+/*******************************************************************************
+  *Ten Tep         :     main.h
+  *Ngay            :     13/03/2014
+  *Tac Gia         :     MinhHa R&D Team
+  *Cong Ty         :     MinhHaGroup
+  *Webside         :     mcu.banlinhkien.vn
+  *Phien Ban       :     V1.0
+  *Tom Tat         :     Ham thuc thi chuong trinh chinh
+  *
+  *
+  *****************************************************************************/
+
+#include "main.h"
+
+void main(void)
+{
+uint8_t str[16];
+GPIO_Config();
+LED_STATUS=LED_OFF;
+sprintf(str,"MinhHa R&D Team");         // Chieu dai chuoi ky tu la 12
+while (1)
+      {  
+        if(!BT_SEND)
+        {
+            delay_ms(10);
+            if(!BT_SEND)
+            {
+                while(!BT_SEND); 
+                LED_STATUS=LED_ON;      
+                RF_SentFrame(str,12);   // Gui chuoi ky tu qua RF
+                LED_STATUS=LED_OFF; 
+            }
+        }   
+      }
+}

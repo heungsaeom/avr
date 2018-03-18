@@ -1,0 +1,86 @@
+/******************************************************************************
+  *Ten Tep       :     RF_GiaiMa.h
+  *Ngay          :     13/03/2014
+  *Tac Gia       :     MinhHa R&D Team
+  *Cong Ty       :     MinhHaGroup
+  *Webside       :     mcu.banlinhkien.vn
+  *Phien Ban     :     V1.0
+  *Tom Tat       :     Khai bao ca ham thu vien su dung cho RF315 giai ma
+  *
+  *
+  ******************************************************************************
+  * Chu Y        :   Phai dinh nghia chan Data cua RF 315(433)M vao file main.h
+  * Vi Du        : 
+  
+    #define     RF_DATA_IN     PINB_3
+                              
+  ******************************************************************************
+**/
+/*********************************** VI DU *************************************
+
+  // Khai bao 1 mang ky tu de luu du lieu nhan ve
+  uint8_t str[16];
+  // Kiem tra va hien thi du lieu nhan ve len LCD16x2
+  if(RF_GetFrame(str,16))
+  {
+    LCD_Gotoxy(0,0);
+    LCD_Puts(str);
+  }
+  
+********************************************************************************/
+
+#ifndef __RF_GIAIMA_H
+
+#include "main.h"
+
+/*----------------------------------------------------------------------------
+Noi Dung    :   Nhan ve 1 byte du lieu.  
+Tham Bien   :   Khong. 
+Tra Ve      :   1 byte du lieu kieu uint8_t.
+ -----------------------------------------------------------------------------*/ 
+uint8_t RF_GetByte();           
+
+/*----------------------------------------------------------------------------
+Noi Dung    :   Nhan va kiem tra 3 byte 0xff lam sach duong truyen.  
+Tham Bien   :   Khong. 
+Tra Ve      :   1: neu dung la 3 byte 0xff.
+                0: khong dung la 3 byte 0xff.
+ -----------------------------------------------------------------------------*/ 
+uint8_t RF_GetDataStart();          
+
+/*----------------------------------------------------------------------------
+Noi Dung    :   Nhan va kiem tra xung vuong bat dau khung truyen co T=4ms.  
+Tham Bien   :   Khong. 
+Tra Ve      :   1: neu dung la xung vuong bat dau.
+                0: neu khong dung la xung vuong bat dau.
+ -----------------------------------------------------------------------------*/ 
+uint8_t RF_GetPulseStart();       
+
+/*----------------------------------------------------------------------------
+Noi Dung    :   Nhan va kiem tra xung vuong ket thuc khung truyen co T=6ms.  
+Tham Bien   :   Khong. 
+Tra Ve      :   1: neu dung la xung vuong ket thuc.
+                0: neu khong dung la xung vuong ket thuc.
+ -----------------------------------------------------------------------------*/
+uint8_t RF_GetPulseFinish();      
+
+/*----------------------------------------------------------------------------
+Noi Dung    :   Nhan nhieu byte du lieu.  
+Tham Bien   :   *array: con tro luu tru dia chi cac byte du lieu nhan vao.
+                length: so byte du lieu nhan vao. 
+Tra Ve      :   Khong.
+ -----------------------------------------------------------------------------*/ 
+void RF_GetArray(uint8_t *Array,uint8_t Length);    
+
+/*----------------------------------------------------------------------------
+Noi Dung    :   Nhan va kiem tra khung du lieu truyen den. 
+Tham Bien   :   *data: con tro luu tru dia chi cac byte du lieu nhan vao.
+                length: so byte du lieu nhan vao. 
+Tra Ve      :   1: neu dung khung du lieu
+                0: neu khong dung khung du lieu
+ -----------------------------------------------------------------------------*/
+uint8_t RF_GetFrame(uint8_t *Data,uint8_t Length);  
+#endif
+ 
+/******************************KET THUC FILE*********************************
+______________________________ MinhHa R&D Team______________________________*/

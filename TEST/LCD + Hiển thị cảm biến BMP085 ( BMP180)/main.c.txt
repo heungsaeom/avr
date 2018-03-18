@@ -1,0 +1,32 @@
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include "lcd.h"
+#include "lib/i2cmaster.h"
+#include "lib/bmp085.h"
+int apsuat=0;
+int nhietdo=0;
+int main(void)
+{
+	lcd_init(LCD_DISP_ON);
+	lcd_home();
+	lcd_gotoxy(0,0);
+	lcd_puts("Nhiet do:");
+	lcd_gotoxy(0,1);
+	lcd_puts("Ap suat:");
+//	lcd_command(LCD_DISP_ON_BLINK);
+	while(1)
+	{
+		bmp085_init();
+		apsuat=bmp085_getpressure();
+		nhietdo=bmp085_gettemperature();
+
+		lcd_gotoxy(10,0);
+		lcd_putnum(nhietdo);
+		lcd_gotoxy(9,1);
+		lcd_putnum(apsuat/100);
+		lcd_putnum(apsuat%100);
+
+		
+	}
+}

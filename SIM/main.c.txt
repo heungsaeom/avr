@@ -1,0 +1,130 @@
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+volatile unsigned char c;
+volatile unsigned char pos = 0;
+unsigned char rx_buffer[20];
+
+#define RX_BUFF 10
+#define BAUD 9600
+#define BAUDRATE (F_CPU / (BAUD * 16UL) - 1)
+
+void uart_init(void);
+void uart_send(uint8_t data);
+int i=0;
+int co=0;
+
+void uart_init(void) {
+    UBRR0H = BAUDRATE >> 8;
+    UBRR0L = BAUDRATE >> 0;
+    UCSR0B |= _BV(TXEN0) | _BV(RXEN0) | _BV(RXCIE0);
+    UCSR0C |= _BV(USBS0) | (3 << UCSZ00);
+}
+
+
+void uart_send(uint8_t data) {
+    while (!(UCSR0A & _BV(UDRE0)));
+    UDR0 = data;
+}
+
+uint8_t uart_read(void)
+{
+  // Check to see if something was received
+  while (!(UCSR0A & _BV(RXC0)));
+  return (uint8_t) UDR0;
+}
+
+void uart_sendString(char *str)
+{
+  while (*str != '\0')
+  {
+    uart_send(*str);
+    ++str;
+  }
+}
+
+void gsm_init()
+{
+	uart_sendString("AT\r\n");               // Kiem tra module Sim
+	_delay_ms(1000);
+	uart_sendString("ATE0\r\n");			 // Tat che do phan hoi du lieu truyen den Sim
+	_delay_ms(1000);
+	uart_sendString("AT+CMGF=1\r\n");		 // Dua tin nhan ve che do text
+	_delay_ms(1000);
+//	uart_sendString("AT+CMGR=1\r\n");		 // Doc sms gui den
+//	_delay_ms(1000);
+	uart_sendString("AT+CNMI=2,2\r\n");		 // Hien thi truc tiep noi dung tin nhan
+	_delay_ms(1000);		
+}
+
+void call()
+{
+	uart_sendString("ATD");
+	uart_sendString("01672271421");
+	uart_sendString("\r\n");
+}
+void sms()
+{
+	uart_sendString("AT+CMGS=");
+	uart_sendString("01672271421");
+	uart_sendString("\r\n");
+	_delay_ms(1000);
+	uart_sendString("co so vua goi");
+	uart_send(26);
+	 
+}
+int main(void) {
+    uart_init();
+	gsm_init();
+	DDRC |= _BV(PC4);
+	PORTC |= _BV(PC4);
+    sei();
+    while(1)
+    {
+		for(i=0;i<20;i++)
+		{
+			if(rx_buffer[i] == 'R' && rx_buffer[i+1] == 'I' && rx_buffer[i+2] == 'N' && rx_buffer[i+3] == 'G')
+			{
+				if((PINC&0x08) == 0x08)
+				{			
+					co=1;
+				}
+				else
+				{
+					co=0;
+				}
+
+			}
+					
+		}
+		if(co == 1)
+		{
+			PORTC &= ~(_BV(PC4));	
+			
+
+		}
+		else 
+		{
+			PORTC |= _BV(PC4);
+		}
+
+    }
+
+    return 0;
+}
+
+ISR(USART_RX_vect)
+{
+	rx_buffer[pos]=UDR0;
+	pos++;
+	if(pos >= 20)
+	{
+		pos = 0;
+	}
+	
+}

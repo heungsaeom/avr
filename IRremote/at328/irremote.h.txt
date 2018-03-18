@@ -1,0 +1,32 @@
+#ifndef IRREMOTE_H_
+#define IRREMOTE_H_
+
+#ifndef COMMONTIMER_H_
+#warning "Make sure to use 100uS timer"
+#endif
+
+#include <inttypes.h>
+
+//times for pulse length check (100 uS * 130 = 13 mS)
+#define AGC_BURST 130
+#define REPEAT_TIME 110
+#define ONES_TIME 20
+#define ZEROS_TIME 9
+#define PACKET_TIME 1150
+
+//enum actions for all remotes
+typedef enum {NO_ACTION, CMD_REPEAT, VOLUME_UP, VOLUME_DOWN, MUTE, INPUT1, INPUT2, INPUT3, INPUT4, PLAY_PAUSE, PREV, NEXT,
+CH_MINUS, CH_PLUS, STOP_MODE, SETUP, ENTER_SAVE, ZERO_TEN, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, REPEAT} commandAction;
+
+typedef struct
+{
+	uint8_t command;
+	commandAction action;
+} commandTemplate;
+
+// takes a 16 bit address that corresponds to the remote to be used (can be 8 or 16 bit), a uint8_t for pinNumber (0 to 5 on port c) and a struct of the remote codes
+void initIR(uint8_t pinNumber, uint16_t address, commandTemplate *commands);
+//will return a enum commandAction that corresponds to the remote code.
+commandAction getIRCommandRec();
+
+#endif /* IRREMOTE_H_ */

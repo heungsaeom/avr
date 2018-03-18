@@ -1,0 +1,18 @@
+#include <avr/io.h>
+#include <util/delay.h>
+#include "lcd.h"
+
+int main(void)
+{
+	lcd_init(LCD_DISP_ON);
+	lcd_home();
+	lcd_puts("nguyenvanhung96bnbn");
+	lcd_gotoxy(2,1);
+	lcd_puts("nguyen");
+	lcd_gotoxy(2,1);
+	lcd_command(LCD_DISP_ON_BLINK);
+	while(1)
+	{
+
+	}
+}

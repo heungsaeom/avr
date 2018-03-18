@@ -1,0 +1,92 @@
+/*#########################################################
+
+Demo program for testing the IR Remote control libraries.
+-----------------------------------------------------------
+
+Copyright Avinash Gupta 2008 avinash@eXtremeElectronics.co.in
+
+Web: www.eXtremeElectronics.co.in
+
+Please give credit or reference to www.eXtremeElectronics.co.in
+if you use this in your projects and find it useful.
+
+
+##########################################################*/
+#include <avr/io.h>
+#include <util/delay.h>
+#include "remote.h"
+#define RX_BUFF 10
+#define BAUD 9600
+#define BAUDRATE (F_CPU / (BAUD * 16UL) - 1)
+
+void uart_init(void);
+void uart_send(uint8_t data);
+
+
+void uart_init(void) {
+    UBRRH = BAUDRATE >> 8;
+    UBRRL = BAUDRATE >> 0;
+    UCSRB |= _BV(TXEN) | _BV(RXEN);
+    UCSRC |= _BV(USBS) | (3 << UCSZ0);
+}
+
+
+void uart_send(uint8_t data) {
+    while (!(UCSRA & _BV(UDRE)));
+    UDR = data;
+}
+
+uint8_t uart_read(void)
+{
+  // Check to see if something was received
+  while (!(UCSRA & _BV(RXC)));
+  return (uint8_t) UDR;
+}
+
+void uart_sendString(char *str)
+{
+  while (*str != '\0')
+  {
+    uart_send(*str);
+    ++str;
+  }
+}
+
+const char* uart_readString(void)
+{
+  static char rxstr[RX_BUFF];
+  static char* temp;
+  temp = rxstr;
+
+  while((*temp = uart_read()) != '\n')
+  {
+    ++temp;
+  }
+
+  return rxstr;
+}
+int main(void)
+{
+	uint8_t cmd=0;
+
+	uart_init();
+	uart_sendString("hung");
+	RemoteInit();
+	DDRC=0xFF;
+	
+	while(1)
+	{
+		cmd=GetRemoteCmd(1);
+		if(cmd == 16724175)
+		{
+			PORTC=0xFF;
+		}
+			if(cmd == 16718055)
+		{
+			PORTC=0x00;
+		}
+		_delay_ms(500);
+
+	}
+ 	return 0;
+}

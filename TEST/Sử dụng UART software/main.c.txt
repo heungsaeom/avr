@@ -1,0 +1,32 @@
+#include <avr/interrupt.h>
+#include <avr/pgmspace.h>
+#include <util/delay.h>
+
+#define SOFTUART_RXPIN   PINB
+#define SOFTUART_RXDDR   DDRB
+#define SOFTUART_RXBIT   PB0
+
+#define SOFTUART_TXPORT  PORTB
+#define SOFTUART_TXDDR   DDRB
+#define SOFTUART_TXBIT   PB1
+
+#include "soft_uart.h"
+
+int main(void)
+{
+	softuart_init();
+	softuart_turn_rx_on(); 	
+	sei();
+	while(1)
+	{
+		softuart_puts("hung");
+		if(softuart_getchar()=='a')
+		{
+			softuart_puts("ok");
+		}
+		_delay_ms(100);
+	}
+
+	
+	return 0; 
+}
